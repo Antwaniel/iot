@@ -20,7 +20,7 @@ if(isset($_REQUEST['user']) && isset($_REQUEST['pass'])){
                 "status" => "ok",
                 "jwt"=>JWT::create($result, "12345678")
             ];
-            echo "hola";
+            
            
         }else{
             $result =["status" => "error"]; 
