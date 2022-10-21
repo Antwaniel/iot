@@ -19,16 +19,14 @@ if(isset($_REQUEST['user']) && isset($_REQUEST['pass'])){
             $result =[
                 "status" => "ok",
                 "jwt"=>JWT::create($result, "12345678")
-            ];
-            
-           
+            ];   
         }else{
             $result =["status" => "error"]; 
         }
+        echo json_encode($result);
 
 }else{
     header(("HTTP/1.1 400 Bad Request"));
- 
 }
 
 

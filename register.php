@@ -1,5 +1,22 @@
 <?php
 require_once "connection.php";
+require_once "jwt.php";
+if($_SERVER["REQUEST_METHOD"]=="OPTIONS"){
+    exit(0);
+}
+$jwt =apache_request_headers()["Authorization"];
+if(strstr($jwt, "Bearer")){
+    $jwt=substr($jwt,7);
+}
+if(JWT::verify($jwt, "12345678")){
+    header(("HTTP/1.1 401 Unauthorized"));
+    exit();
+}
+
+
+// POSTMAN:
+// GET = user&pas: params
+//POST=  body:form data
 
 $metodo = $_SERVER["REQUEST_METHOD"];
 
@@ -47,8 +64,32 @@ switch ($metodo) {
 
     case "PUT":
         //Actualizar
+        if (!isset($_GET['type']) && !isset($_GET['value'])&& !isset($_GET['id'])) {
+            header("HTTP/1.1 400 Bad Request");
+            return;
+        }else{
+        $connection = connection();
+        $statement = $connection->prepare("UPDATE register SET type=:t, value=:v WHERE id=:id");
+        $statement->bindValue("id", $_GET['id']);
+        $statement->bindValue(":t", $_GET['type']);
+        $statement->bindValue(":v", $_GET['value']);
+        $statement->execute();     
+            echo json_encode(["status"=>"success"]);
+        }
         break;
+
+
     case "DELETE";
         //Eliminar
+        if (!isset($_GET['id'])) {
+            header("HTTP/1.1 400 Bad Request");
+            return;
+        }else{
+        $connection = connection();
+        $statement = $connection->prepare("DELETE FROM register WHERE id=:id");
+        $statement->bindValue("id", $_GET['id']);
+        $statement->execute();     
+            echo json_encode(["status"=>"success"]);
+        }
         break;
 }
